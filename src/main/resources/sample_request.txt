@@ -1,0 +1,128 @@
+--Post Template:
+
+{
+  "type": "nps",
+  "version": 2,
+  "metadata": {
+    "name": "Core NPS Survey",
+    "description": "Measures customer loyalty and likelihood to recommend",
+    "category": "engagement",
+    "createdAt": "2024-01-15T00:00:00Z",
+    "updatedAt": "2024-01-15T00:00:00Z"
+  },
+  "content": {
+    "title": "How likely are you to recommend our app to a friend or colleague?",
+    "description": "Your feedback helps us improve the experience for everyone",
+    "scale": {
+      "min": 0,
+      "max": 10,
+      "min_label": "Not likely",
+      "max_label": "Extremely likely"
+    },
+    "questions": [
+      {
+        "id": "nps_score",
+        "type": "nps_scale",
+        "text": "",
+        "required": true,
+        "analytics_key": "nps_score"
+      }
+    ],
+    "conditional_followup": {
+      "enabled": true,
+      "rules": [
+        {
+          "condition": { "operator": "<=", "value": 6 },
+          "question": {
+            "id": "followup_detractor",
+            "type": "text",
+            "text": "What's the main reason for your score?",
+            "required": false,
+            "placeholder": "Please share what we can improve...",
+            "analytics_key": "detractor_feedback"
+          }
+        },
+        {
+          "condition": { "operator": "between", "min": 7, "max": 8 },
+          "question": {
+            "id": "followup_passive",
+            "type": "text",
+            "text": "What would make your experience even better?",
+            "required": false,
+            "analytics_key": "passive_feedback"
+          }
+        },
+        {
+          "condition": { "operator": ">=", "value": 9 },
+          "question": {
+            "id": "followup_promoter",
+            "type": "text",
+            "text": "What do you love most about our app?",
+            "required": false,
+            "analytics_key": "promoter_feedback"
+          }
+        }
+      ]
+    }
+  },
+  "appearance": {
+    "theme": "auto",
+    "background_color": "#FFFFFF",
+    "text_color": "#111111",
+    "accent_color": "#1976D2",
+    "overlay_background": "rgba(0,0,0,0.5)",
+    "card_style": {
+      "corner_radius": 12,
+      "elevation": 8,
+      "padding": 24
+    },
+    "button_style": {
+      "primary_color": "#1976D2",
+      "primary_text_color": "#FFFFFF",
+      "secondary_color": "#F5F5F5",
+      "secondary_text_color": "#1976D2",
+      "border_radius": 8,
+      "height": 48
+    }
+  },
+  "behavior": {
+    "presentation": {
+      "type": "modal",
+      "position": "center",
+      "dismissible": true,
+      "show_close_button": true
+    },
+    "submission": {
+      "auto_close": true,
+      "show_thank_you": true,
+      "thank_you_message": "Thank you for your feedback!"
+    }
+  },
+  "logic": {
+    "trigger": {
+      "type": "event_based",
+      "event_name": "app_launch",
+      "conditions": [
+        { "type": "user_property", "key": "session_count", "operator": ">=", "value": 3 },
+        { "type": "user_property", "key": "account_age_days", "operator": ">=", "value": 7 },
+        { "type": "last_survey_days", "survey_id": "nps_survey_v2", "operator": ">=", "value": 90 }
+      ]
+    },
+    "targeting": {
+      "user_segments": ["all"],
+      "exclude_segments": ["beta_testers", "internal"],
+      "app_versions": { "min": "1.0.0", "max": "999.999.999" },
+      "platforms": ["ios", "android"]
+    },
+    "cooldown": {
+      "global_days": 90,
+      "user_days": 60
+    }
+  },
+  "analytics": {
+    "track_impressions": true,
+    "track_dismissals": true,
+    "track_partial_completions": true,
+    "custom_dimensions": ["user_segment", "app_version", "platform"]
+  }
+}
